@@ -1,0 +1,13 @@
+	Lab1 SPOLKS
+	Local time providing server
+Task: the simplest server implementation using TCP/IP and Berkeley sockets.
+
+Implementing language: Python
+To run server type
+$python main.py
+or even
+$make.
+
+Tested in Debian GNU/Linux 7 as a VirtualBox guest. Client - Microsoft Telnet
+from Windows 8 host.
+
