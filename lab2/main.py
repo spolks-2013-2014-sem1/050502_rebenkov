@@ -4,7 +4,8 @@
 import socket				#import socket module
 from time import localtime, strftime	#import time module
 
-s = socket.socket()			#create a socket object
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#create a socket object
 port = 12345				#reserve a (random) port for server
 s.bind(('',port))			#bind to the port
 #using s.bind(('',port)) syntax instead of s.bind((socket.gethostname(),port))
