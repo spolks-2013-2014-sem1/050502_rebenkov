@@ -23,6 +23,7 @@ def run_server(port, filename):
 	f = open(filename, 'rb')
 	filesize = os.stat(filename).st_size
 	sentsize = 0
+	perflag = 0
 	
 	while True:
 		data = f.read(BUF_SIZE)
@@ -39,11 +40,16 @@ def run_server(port, filename):
 		except socket.error:
 			print 'Transfer fail'
 			sys.exit
-		if (percent % 10 == 0) & (percent > 8):
+		if (percent % 10 == 0) & (perflag != percent):
+			perflag = percent
 			sys.stdout.write('\033D')
 			print 'Urgent flag sent at {}%'.format(percent)
-
-			conn.send('{}'.format(percent), socket.MSG_OOB)
+			conn.send(b'{}'.format(percent/10), socket.MSG_OOB)
+		if (percent == 100) & (perflag != percent):
+			perflag = percent
+			sys.stdout.write('\033D')
+			print 'Urgent flag sent at {}%'.format(percent)
+			conn.send(b'{!}', socket.MSG_OOB)
 			
 	f.close()				#please close your files
 	conn.close()			#and connections
@@ -62,20 +68,24 @@ def run_client(host, port):
 	
 	f = open('rcvd.file','wb')
 	rcvdsize = 0
+	s.settimeout(2)
 	
 	while True:
 		try:
 			data = s.recv(2, socket.MSG_OOB)
 		except socket.error, value:
 			data = None
-		if data:
-			print '{} Kb ({}%) received'.format(rcvdsize/1024, data)
+		if (data == '!'):
+			print '{} Kb (100%) received'.format(rcvdsize/1024)
+		elif data:
+			print '{} Kb ({}0%) received'.format(rcvdsize/1024, data)
 		else:
 			data = s.recv(BUF_SIZE)
 			rcvdsize += BUF_SIZE
+			f.write(data)
 		if not data:
 			break
-		f.write(data)
+			
 			
 	print 'Done!'
 	f.close()
