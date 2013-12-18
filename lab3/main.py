@@ -1,17 +1,17 @@
 #!/usr/bin/python			#spolks lab3 main.py
 #A simple client-server app for file transmit via TCP.
 
-import sys
+import sys				#import some modules
 import socket
 import argparse
 
-BUF_SIZE = 1024
+BUF_SIZE = 1024			#randomly generated 2^n size buffer
 
 
 def run_server(port, filename):
 	
 	if 0 <= port <= 65535:
-		s = socket.socket()
+		s = socket.socket()		#read docs.python.org
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		s.bind(('',port))
 		s.listen(1)
@@ -30,15 +30,16 @@ def run_server(port, filename):
 		except socket.error:
 			print 'Transfer failed'
 			sys.exit
-	f.close()
-	conn.close()
+	f.close()				#please close your files
+	conn.close()			#and connections
+	s.close()				#CLOSE 'EM ALL!!!
 	
 	
 def run_client(host, port):
 	if 0 <= port <= 65535:
-		s = socket.socket()
+		s = socket.socket()		#didn't you read docs.python.org?
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
-#		host = socket.gethostname()
+#		host = socket.gethostname() #it could be anywhere
 		s.connect((host,port))
 	else:
 		print 'Port # must be in range 0-65535'
