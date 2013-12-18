@@ -1,0 +1,17 @@
+	Lab3 SPOLKS
+	Simple client-server app for file transmit via TCP
+
+Synopsis
+
+Run as server:
+$python main.py -s [-p port] [-f filename]
+
+Run as client:
+$python main.py -c [-a host] [-p port]
+
+Default host: 127.0.0.1
+Default port: 12345
+Client saves file with name 'rcvd.file'.
+Default filename for server to send: 'send.file'.
+
+
