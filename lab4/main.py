@@ -28,9 +28,9 @@ def run_server(port, filename):
 	while True:
 		data = f.read(BUF_SIZE)
 		sentsize += BUF_SIZE
-		percent = int(float(sentsize)*100/float(filesize))
+		percent = int(float(sentsize)*100/float(filesize))	#rings
 		print "{} Kb of {} Kb sent ({}%)".format(sentsize/1024, filesize/1024, percent)
-		sys.stdout.write('\033M')
+		sys.stdout.write('\033M')			#escape symbols rule
 		if not data:
 			sys.stdout.write('\033D')
 			print 'Data has been transfered'
@@ -40,16 +40,11 @@ def run_server(port, filename):
 		except socket.error:
 			print 'Transfer fail'
 			sys.exit
-		if (percent % 10 == 0) & (perflag != percent):
+		if (percent % 10 == 0) & (perflag != percent) & (percent <92):
 			perflag = percent
 			sys.stdout.write('\033D')
 			print 'Urgent flag sent at {}%'.format(percent)
 			conn.send(b'{}'.format(percent/10), socket.MSG_OOB)
-		if (percent == 100) & (perflag != percent):
-			perflag = percent
-			sys.stdout.write('\033D')
-			print 'Urgent flag sent at {}%'.format(percent)
-			conn.send(b'{!}', socket.MSG_OOB)
 			
 	f.close()				#please close your files
 	conn.close()			#and connections
@@ -71,15 +66,15 @@ def run_client(host, port):
 	s.settimeout(2)
 	
 	while True:
-		try:
-			data = s.recv(2, socket.MSG_OOB)
+		try:							#weird, but still working
+			data = s.recv(2, socket.MSG_OOB)	#2 bytes = 1 char
 		except socket.error, value:
-			data = None
-		if (data == '!'):
-			print '{} Kb (100%) received'.format(rcvdsize/1024)
-		elif data:
+			data = None							#why not?
+#		if (data == '!'):
+#			print '{} Kb (100%) received'.format(rcvdsize/1024)
+		if data:						#bells
 			print '{} Kb ({}0%) received'.format(rcvdsize/1024, data)
-		else:
+		else:		#i.e. we haven't MSG_OOB
 			data = s.recv(BUF_SIZE)
 			rcvdsize += BUF_SIZE
 			f.write(data)
